@@ -269,35 +269,6 @@ services:
       # - traefik.http.routers.portainer.tls=true
       - traefik.http.services.portainer.loadbalancer.server.port=9000
 
-  nocodb:
-    profiles: ["nocode"]
-    image: nocodb/nocodb:latest
-    container_name: nocodb
-    restart: unless-stopped
-    ports:
-      - "${NOCODB_PORT:-8081}:8080"
-    environment:
-      - NC_PUBLIC_URL=${NC_PUBLIC_URL:-http://localhost:8081}
-      - NC_DISABLE_TELEMETRY=${NC_DISABLE_TELEMETRY:-true}
-      - NC_ADMIN_EMAIL=${NC_ADMIN_EMAIL:-foobar@gmail.com}
-      - NC_ADMIN_PASSWORD=${NC_ADMIN_PASSWORD:-aaaaaaaa}
-      - NC_AUTH_JWT_SECRET=${NC_AUTH_JWT_SECRET:-please_change_me}
-      - TZ=${TZ:-Europe/Paris}
-    volumes:
-      - nocodb_data:/usr/app/data
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - app-net
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=app-net
-      - traefik.http.routers.nocodb.rule=Host(`nocodb.${DOMAIN:-localhost}`)
-      - traefik.http.routers.nocodb.entrypoints=web
-      # - traefik.http.routers.nocodb.tls=true
-      - traefik.http.services.nocodb.loadbalancer.server.port=8080
-
   docker-socket-proxy:
     image: tecnativa/docker-socket-proxy:latest
     container_name: docker-socket-proxy
@@ -330,7 +301,6 @@ volumes:
   es_data:
   portainer_data:
   netdata_data:
-  nocodb_data:
   filebeat_data:
 
 networks:

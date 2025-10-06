@@ -11,19 +11,10 @@ else
   exit 1
 fi
 
-
-ensure_network() {
-  local net="app-net"
-  if ! docker network inspect "$net" >/dev/null 2>&1; then
-    echo "[launch] Creating network $net"
-    docker network create "$net"
-  fi
-}
-
 # Project-specific mapping of profiles to services
 available_profiles() {
     # Static list aligned with docker-compose.yml
-    echo "proxy dev testing observability monitoring tools nocode"
+    echo "proxy dev testing observability monitoring tools"
 }
 
 profile_services() {
@@ -34,7 +25,6 @@ profile_services() {
         observability) echo "elasticsearch kibana apm-server filebeat" ;;
         monitoring) echo "netdata portainer" ;;
         tools) echo "docker-socket-proxy" ;;
-        nocode) echo "nocodb" ;;
         *) echo "" ;;
     esac
 }
@@ -59,20 +49,18 @@ choose_profiles_with_presets() {
 2) Dev + Observability  → proxy dev observability (db, traefik, mailhog, es, kibana, apm, filebeat)
 3) Testing (Selenium)   → testing proxy       (db, selenium, traefik)
 4) Monitoring & Tools   → monitoring tools proxy (db, netdata, portainer, docker-socket-proxy, traefik)
-5) Nocode (NocoDB)      → nocode proxy       (db, nocodb, traefik)
-6) Minimal              → (aucun profil)     (db seulement)
-7) Personnalisé         → saisir les profils séparés par des espaces
+5) Minimal              → (aucun profil)     (db seulement)
+6) Personnalisé         → saisir les profils séparés par des espaces
 MENU
     local choice
     read -r -p "Votre choix [1] : " choice
     case "${choice:-1}" in
         1) echo "proxy dev" ;;
         2) echo "proxy dev observability" ;;
-        3) echo "testing proxy" ;;
-        4) echo "monitoring tools proxy" ;;
-        5) echo "nocode proxy" ;;
-        6) echo "" ;;
-        7)
+        3) echo "proxy testing" ;;
+        4) echo "proxy monitoring tools" ;;
+        5) echo "" ;;
+        6)
             local custom
             read -r -p "Profils personnalisés (ex: 'proxy dev testing'): " custom
             echo "$custom"
@@ -108,8 +96,6 @@ choose_and_launch() {
     for p in $SELECTED; do
         compose_args+=(--profile "$p")
     done
-
-    ensure_network
 
     echo "Lancement: docker compose ${compose_args[*]} up -d"
     docker compose "${compose_args[@]}" up -d
