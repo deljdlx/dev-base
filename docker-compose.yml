@@ -2,7 +2,7 @@ services:
 
   traefik:
     image: traefik:v3.1
-    container_name: traefik
+    # container_name: traefik
     restart: unless-stopped
     profiles: ["proxy"]
     command:
@@ -38,7 +38,7 @@ services:
 
   selenium:
     image: selenium/standalone-chrome:latest
-    container_name: selenium
+    # container_name: selenium
     shm_size: 2g
     restart: unless-stopped
     profiles: ["testing"]
@@ -61,7 +61,7 @@ services:
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.17.26
-    container_name: filebeat
+    # container_name: filebeat
     user: root
     # Copy config inside container to satisfy Filebeat's strict ownership check, then start
     command: ["/bin/sh","-c","cp /config/filebeat.yml /usr/share/filebeat/filebeat.yml && chown root:root /usr/share/filebeat/filebeat.yml && exec filebeat -e --strict.perms=false"]
@@ -85,7 +85,7 @@ services:
 
   mailhog:
     image: mailhog/mailhog
-    container_name: mailhog
+    # container_name: mailhog
     restart: unless-stopped
     profiles: ["dev"]
     ports:
@@ -104,7 +104,7 @@ services:
   netdata:
     profiles: ["monitoring"]
     image: netdata/netdata:latest
-    container_name: netdata
+    # container_name: netdata
     cap_add:
       - SYS_PTRACE
       - NET_ADMIN
@@ -130,7 +130,7 @@ services:
 
   db:
     image: mariadb:11
-    container_name: db
+    # container_name: db
     ports:
       - "${DB_BIND_ADDR:-0.0.0.0}:${DB_PORT:-3306}:3306"
     restart: unless-stopped
@@ -155,7 +155,7 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.26
-    container_name: elasticsearch
+    # container_name: elasticsearch
     restart: unless-stopped
     profiles: ["observability"]
     environment:
@@ -189,7 +189,7 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.26
-    container_name: kibana
+    # container_name: kibana
     restart: unless-stopped
     profiles: ["observability"]
     ports:
@@ -217,7 +217,7 @@ services:
 
   apm-server:
     image: docker.elastic.co/apm/apm-server:7.17.26
-    container_name: apm-server
+    # container_name: apm-server
     restart: unless-stopped
     profiles: ["observability"]
     ports:
@@ -249,7 +249,7 @@ services:
   portainer:
     profiles: ["monitoring"]
     image: portainer/portainer-ce:latest
-    container_name: portainer
+    # container_name: portainer
     restart: unless-stopped
     ports:
       - "${PORTAINER_PORT:-9000}:9000"
@@ -271,7 +271,7 @@ services:
 
   docker-socket-proxy:
     image: tecnativa/docker-socket-proxy:latest
-    container_name: docker-socket-proxy
+    # container_name: docker-socket-proxy
     restart: unless-stopped
     profiles: ["tools"]
     # Do NOT publish this port externally; other containers can reach it at http://docker-socket-proxy:2375
